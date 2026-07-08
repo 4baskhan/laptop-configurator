@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FORGE — Build Your Laptop</title>
+<meta name="description" content="Design and price your own laptop in real time, in 3D." />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<!-- Styles -->
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===================== BACKGROUND ===================== -->
+<div class="bg-wave" aria-hidden="true">
+  <svg class="wave-grid" viewBox="0 0 1440 600" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="waveFade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#2E8FFF" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="#2E8FFF" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path class="wave-path wave-1" d="M0,300 C 240,260 480,340 720,300 C 960,260 1200,340 1440,300 L1440,600 L0,600 Z" fill="url(#waveFade)"/>
+    <path class="wave-path wave-2" d="M0,340 C 240,300 480,380 720,340 C 960,300 1200,380 1440,340 L1440,600 L0,600 Z" fill="url(#waveFade)"/>
+  </svg>
+</div>
+
+<!-- ===================== NAV ===================== -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="brand">FORGE<span class="brand-dot">.</span></a>
+    <nav class="nav-links">
+      <a href="#configurator">Configure</a>
+      <a href="#compare">Compare</a>
+      <a href="#" id="savedBuildsLink">Saved builds</a>
+    </nav>
+    <button class="cart-btn" id="cartBtn" aria-label="Open cart">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="top">
+  <div class="hero-copy">
+    <p class="eyebrow">Custom-built performance</p>
+    <h1 class="hero-title">Build the laptop<br><span class="glow-text">only you</span> would spec.</h1>
+    <p class="hero-sub">Pick the chassis, silicon, memory and glass. Watch it change in real time, then take it home.</p>
+    <a href="#configurator" class="btn btn-primary">Start building →</a>
+  </div>
+  <div class="hero-stage" id="heroStage">
+    <canvas id="heroCanvas"></canvas>
+  </div>
+</section>
+
+<!-- ===================== CONFIGURATOR ===================== -->
+<section class="configurator" id="configurator">
+  <div class="config-grid">
+
+    <!-- 3D viewport -->
+    <div class="viewport-panel">
+      <div class="viewport" id="viewport">
+        <canvas id="configCanvas"></canvas>
+        <div class="viewport-hint">Drag to rotate</div>
+      </div>
+      <div class="viewport-actions">
+        <button class="icon-btn" id="rotateToggle" title="Toggle auto-rotate">⟳ Auto-rotate</button>
+        <button class="icon-btn" id="openLidBtn" title="Open / close lid">⇕ Lid</button>
+      </div>
+
+      <!-- Performance meter -->
+      <div class="perf-card">
+        <div class="perf-head">
+          <span>Performance score</span>
+          <span class="perf-value" id="perfValue">0</span>
+        </div>
+        <div class="perf-gauge">
+          <svg viewBox="0 0 120 70" class="gauge-svg">
+            <path d="M10,65 A55,55 0 0 1 110,65" fill="none" stroke="#132042" stroke-width="10" stroke-linecap="round"/>
+            <path id="gaugeArc" d="M10,65 A55,55 0 0 1 110,65" fill="none" stroke="url(#gaugeGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="173" stroke-dashoffset="173"/>
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#2E8FFF"/>
+                <stop offset="100%" stop-color="#5EEBFF"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <p class="perf-label" id="perfLabel">Everyday tasks</p>
+      </div>
+    </div>
+
+    <!-- Options panel -->
+    <div class="options-panel">
+      <h2 class="panel-title">Configure your build</h2>
+
+      <div class="option-group" data-group="chassis">
+        <h3>Chassis finish</h3>
+        <div class="swatch-row" id="chassisOptions"></div>
+      </div>
+
+      <div class="option-group" data-group="cpu">
+        <h3>Processor</h3>
+        <div class="pill-row" id="cpuOptions"></div>
+      </div>
+
+      <div class="option-group" data-group="ram">
+        <h3>Memory</h3>
+        <div class="pill-row" id="ramOptions"></div>
+      </div>
+
+      <div class="option-group" data-group="storage">
+        <h3>Storage</h3>
+        <div class="pill-row" id="storageOptions"></div>
+      </div>
+
+      <div class="option-group" data-group="display">
+        <h3>Display</h3>
+        <div class="pill-row" id="displayOptions"></div>
+      </div>
+
+      <div class="option-group" data-group="backlight">
+        <h3>Keyboard glow</h3>
+        <div class="swatch-row" id="backlightOptions"></div>
+      </div>
+
+      <!-- Summary / price / actions -->
+      <div class="summary-card">
+        <div class="summary-row">
+          <span>Estimated total</span>
+          <span class="price" id="totalPrice">$0</span>
+        </div>
+        <ul class="summary-list" id="summaryList"></ul>
+        <div class="summary-buttons">
+          <button class="btn btn-ghost" id="saveBuildBtn">Save build</button>
+          <button class="btn btn-ghost" id="shareBuildBtn">Copy share link</button>
+          <button class="btn btn-primary" id="addToCartBtn">Add to cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COMPARE ===================== -->
+<section class="compare-section" id="compare">
+  <h2 class="section-title">Compare saved builds</h2>
+  <p class="section-sub">Every build you save lives here — line them up side by side before you decide.</p>
+  <div class="compare-table-wrap">
+    <table class="compare-table" id="compareTable">
+      <thead>
+        <tr id="compareHeadRow"><th>Spec</th></tr>
+      </thead>
+      <tbody id="compareBody"></tbody>
+    </table>
+    <p class="empty-note" id="compareEmptyNote">No saved builds yet — configure one above and hit "Save build".</p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <p>FORGE Laptops — built for a front-end internship project. Not a real store.</p>
+</footer>
+
+<!-- ===================== CART DRAWER ===================== -->
+<aside class="drawer" id="cartDrawer">
+  <div class="drawer-head">
+    <h3>Your cart</h3>
+    <button class="close-btn" id="closeCartBtn">✕</button>
+  </div>
+  <div class="drawer-body" id="cartItems"></div>
+  <div class="drawer-foot">
+    <div class="drawer-total">
+      <span>Total</span>
+      <span id="drawerTotal">$0</span>
+    </div>
+    <button class="btn btn-primary btn-block" id="checkoutBtn">Checkout</button>
+  </div>
+</aside>
+<div class="scrim" id="scrim"></div>
+
+<!-- ===================== CHECKOUT MODAL ===================== -->
+<div class="modal" id="checkoutModal">
+  <div class="modal-card">
+    <button class="close-btn" id="closeCheckoutBtn">✕</button>
+    <h3>Checkout</h3>
+    <p class="modal-sub">This is a demo checkout — no payment is taken.</p>
+    <div id="checkoutForm">
+      <label>Full name<input type="text" id="custName" placeholder="Jordan Rivera" required></label>
+      <label>Email<input type="email" id="custEmail" placeholder="you@example.com" required></label>
+      <label>Shipping address<input type="text" id="custAddress" placeholder="Street, City, Country" required></label>
+      <button class="btn btn-primary btn-block" id="placeOrderBtn">Place order — <span id="checkoutTotal">$0</span></button>
+    </div>
+    <div id="orderConfirmation" class="order-confirmation hidden">
+      <div class="check-circle">✓</div>
+      <h4>Order confirmed</h4>
+      <p id="orderRef"></p>
+      <button class="btn btn-ghost" id="closeConfirmationBtn">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ===================== SCRIPTS ===================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/laptop3d.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
